@@ -22,26 +22,38 @@ routerIndex.get('/todos', function (req, res) {
 })
 
 routerShow.get('/todos/:id', function (req, res) {
-  Todo.find({}, function (err, todos) {
-    if (err)console.error(err)
-    var todoId = req.params.id
-    todos.forEach(function (eachTodo) {
-      if (eachTodo.id === todoId) {
-        res.render('show', {specificTodo: eachTodo})
-      }
-    })
+  Todo.findById({_id: req.params.id}, function (err, todo) {
+    if (err)console.log(err)
+    res.render('show', {specificTodo: todo})
   })
 })
 
 routerCreate.post('/todos', function (req, res) {
-  var formData = req.body
   res.send(req.body)
+  var formData = req.body
   var data = {
     name: formData.name,
     description: formData.description,
     completed: formData.completed
   }
-  connection.collection('todos').insert(data)
+
+  if (!data.description || data.description === '') {
+    data.description = 'no description'
+  }
+
+  if (data.completed === '' || !data.completed) {
+    data.completed = false
+  }
+
+  if (data.name.length >= 5 && (data.completed === 'true' || data.completed === 'false')) {
+      connection.collection('todos').insert(data, function(err, record){
+        if(err)console.error(err)
+        console.log('entry saved');
+      })
+    } else {
+      console.log('invalid entry; entry not saved in database')
+    }
+
 })
 
 // function create (params) {

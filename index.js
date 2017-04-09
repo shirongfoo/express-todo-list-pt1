@@ -11,7 +11,7 @@ mongoose.Promise = global.Promise
 
 var express = require('express')
 var app = express()
-var port = 8000
+var port = 5000
 
 
 app.set('view engine', 'ejs')
